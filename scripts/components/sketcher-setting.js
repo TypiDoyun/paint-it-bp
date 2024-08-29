@@ -1,4 +1,3 @@
-import { sendSketcherSettingForm } from "../forms/sketcher-setting";
 import { playSound } from "../utils/player";
 export class SketcherSettingComponent {
     constructor() {
@@ -7,6 +6,5 @@ export class SketcherSettingComponent {
     onUse(eventData) {
         const { source, itemStack } = eventData;
         playSound(source, "tile.piston.out");
-        sendSketcherSettingForm(source);
     }
 }

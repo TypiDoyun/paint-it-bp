@@ -1,5 +1,4 @@
 import { ItemComponentUseEvent, ItemCustomComponent } from "@minecraft/server";
-import { sendSketcherSettingForm } from "../forms/sketcher-setting";
 import { playSound } from "../utils/player";
 
 export class SketcherSettingComponent implements ItemCustomComponent {
@@ -11,7 +10,5 @@ export class SketcherSettingComponent implements ItemCustomComponent {
         const { source, itemStack } = eventData;
 
         playSound(source, "tile.piston.out");
-
-        sendSketcherSettingForm(source);
     }
 }
