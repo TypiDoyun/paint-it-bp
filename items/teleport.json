@@ -1,0 +1,24 @@
+{
+	"format_version": "1.21.10",
+	"minecraft:item": {
+		"description": {
+			"identifier": "typidoyun:teleporter"
+		},
+		"components": {
+			"minecraft:custom_components": [ "typidoyun:teleporter" ],
+            "minecraft:display_name": {
+                "value": "teleporter"
+            },
+            "minecraft:icon": "compass_item",
+			"minecraft:max_stack_size": 1,
+			"minecraft:use_modifiers": {
+                "use_duration": 0.2,
+                "movement_modifier": 1
+            },
+            "minecraft:cooldown": {
+                "category": "teleporter",
+                "duration": 0.2
+            }
+		}
+	}
+}

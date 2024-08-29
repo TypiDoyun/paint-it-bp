@@ -1,0 +1,24 @@
+{
+	"format_version": "1.21.10",
+	"minecraft:item": {
+		"description": {
+			"identifier": "typidoyun:eraser_setting"
+		},
+		"components": {
+			"minecraft:custom_components": [ "typidoyun:eraser_setting" ],
+            "minecraft:display_name": {
+                "value": "Eraser Setting"
+            },
+            "minecraft:icon": "eraser_setting",
+			"minecraft:max_stack_size": 1,
+			"minecraft:use_modifiers": {
+                "use_duration": 0.05,
+                "movement_modifier": 1
+            },
+            "minecraft:cooldown": {
+                "category": "eraser_setting",
+                "duration": 0.05
+            }
+		}
+	}
+}

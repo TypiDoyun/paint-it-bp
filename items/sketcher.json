@@ -1,0 +1,24 @@
+{
+	"format_version": "1.21.10",
+	"minecraft:item": {
+		"description": {
+			"identifier": "typidoyun:sketcher"
+		},
+		"components": {
+            "minecraft:custom_components": [ "typidoyun:sketcher" ],
+			"minecraft:display_name": {
+				"value": "Sketcher"
+			},
+            "minecraft:icon": "feather",
+            "minecraft:max_stack_size": 1,
+            "minecraft:use_modifiers": {
+                "use_duration": 0.05,
+                "movement_modifier": 1
+            },
+            "minecraft:cooldown": {
+                "category": "sketcher",
+                "duration": 0.05
+            }
+		}
+	}
+}

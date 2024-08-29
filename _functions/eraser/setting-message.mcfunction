@@ -1,0 +1,1 @@
+titleraw @s actionbar {"rawtext" : [{"text" : "§6지우개§f의 사이즈가 §6《 §f"}, {"score" : {"name" : "*", "objective" : "eraser-scale"}}, {"text" : " §6》 §f으로 설정되었습니다."}]}
