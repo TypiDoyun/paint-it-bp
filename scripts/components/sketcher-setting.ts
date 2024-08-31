@@ -1,5 +1,6 @@
 import { ItemComponentUseEvent, ItemCustomComponent } from "@minecraft/server";
-import { playSound } from "../utils/player";
+import { playSound } from "../helpers/player";
+import { sendSketcherSettingForm } from "../forms/sketcher-setting";
 
 export class SketcherSettingComponent implements ItemCustomComponent {
     constructor() {
@@ -9,6 +10,8 @@ export class SketcherSettingComponent implements ItemCustomComponent {
     public onUse(eventData: ItemComponentUseEvent) {
         const { source, itemStack } = eventData;
 
-        playSound(source, "tile.piston.out");
+        playSound(source, "tile.piston.out", 1);
+
+        sendSketcherSettingForm(source);
     }
 }

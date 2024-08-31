@@ -9,6 +9,9 @@ export var Random;
     Random.randBool = () => {
         return Math.random() < 0.5;
     };
+    Random.randSign = () => {
+        return Math.random() < 0.5 ? -1 : 1;
+    };
     Random.shuffle = (arr) => {
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Random.randInt(0, i);

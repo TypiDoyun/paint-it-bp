@@ -1,5 +1,6 @@
-import { ItemComponentUseEvent, ItemCustomComponent } from "@minecraft/server";
-import { playSound } from "../utils/player";
+import { ItemComponentUseEvent, ItemCustomComponent, system } from "@minecraft/server";
+import { playSound } from "../helpers/player";
+import { sendPainterSettingForm } from "../forms/painter-setting";
 
 export class PainterSettingComponent implements ItemCustomComponent {
     constructor() {
@@ -9,6 +10,8 @@ export class PainterSettingComponent implements ItemCustomComponent {
     public onUse(eventData: ItemComponentUseEvent) {
         const { source, itemStack } = eventData;
 
-        playSound(source, "tile.piston.out");
+        playSound(source, "tile.piston.out", 1);
+
+        sendPainterSettingForm(source);
     }
 }

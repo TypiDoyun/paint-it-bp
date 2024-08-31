@@ -1,9 +1,15 @@
-import { Vector3, Vector3Like } from "./vector.js";
+import { Vector3Like } from "./types/vector";
+import { Vector3 } from "./vector";
 
 export class Quaternion {
     private readonly _vector: Vector3;
     constructor(private _scalar: number, vector: Vector3Like) {
         this._vector = Vector3.from(vector);
+    }
+
+    public *[Symbol.iterator]() {
+        yield this._scalar;
+        yield* this._vector;
     }
 
     public static get zero() {
@@ -23,7 +29,9 @@ export class Quaternion {
     }
 
     public set vector(value: Vector3Like) {
-        this._vector.set("xyz", value);
+        this._vector.x = value.x;
+        this._vector.y = value.y;
+        this._vector.z = value.z;
     }
 
     public get x() {
@@ -105,9 +113,13 @@ export class Quaternion {
                 .add(this._vector.clone.mul(quaternion._scalar))
                 .add(this._vector.clone.cross(quaternion.vector));
         this._scalar = scalar;
-        this._vector.set("xyz", vector);
+        this._vector.x = vector.x;
+        this._vector.y = vector.y;
+        this._vector.z = vector.z;
         return this;
     }
+
+    
 
     public toString() {
         return `Quaternion { scalar: ${this._scalar}, vector: ${this._vector} }`;

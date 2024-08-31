@@ -1,7 +1,7 @@
 import { Axis } from "../types/axis";
 import { Vector2 } from "../utils/math/vector";
-import { Vector3 } from "../utils/math/vector3";
-import { Shape } from "./shape";
+import { Vector3 } from "../utils/math/vector";
+import { Shape } from "../classes/shape";
 export class Plane extends Shape {
     _size;
     _axis;
@@ -46,5 +46,20 @@ export class Plane extends Shape {
         return location.x >= from.x && location.x <= to.x &&
             location.y >= from.y && location.y <= to.y &&
             location.z >= from.z && location.z <= to.z;
+    }
+    toObject() {
+        return JSON.stringify({
+            type: "plane",
+            size: {
+                x: this._size.x,
+                y: this._size.y,
+            },
+            axis: this._axis,
+        });
+    }
+    fromObject(shapeJSON) {
+        this.size = shapeJSON.size;
+        this._axis = shapeJSON.axis;
+        return this;
     }
 }

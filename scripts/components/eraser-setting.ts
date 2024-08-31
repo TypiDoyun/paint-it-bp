@@ -1,5 +1,6 @@
-import { ItemComponentUseEvent, ItemCustomComponent } from "@minecraft/server";
-import { playSound } from "../utils/player";
+import { ItemComponentUseEvent, ItemCustomComponent, system } from "@minecraft/server";
+import { playSound } from "../helpers/player";
+import { sendEraserSettingForm } from "../forms/eraser-setting";
 
 export class EraserSettingComponent implements ItemCustomComponent {
     constructor() {
@@ -9,6 +10,8 @@ export class EraserSettingComponent implements ItemCustomComponent {
     public onUse(eventData: ItemComponentUseEvent) {
         const { source, itemStack } = eventData;
 
-        playSound(source, "tile.piston.out");
+        playSound(source, "tile.piston.out", 1);
+
+        sendEraserSettingForm(source);
     }
 }

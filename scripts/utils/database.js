@@ -2,7 +2,7 @@ import { world } from "@minecraft/server";
 export var Database;
 (function (Database) {
     const IDENTIFIER = "typi-database";
-    const MAX_LENGTH = 32_767;
+    const MAX_LENGTH = 32767;
     const getByte = (char) => {
         const charCode = char.charCodeAt(0);
         if (charCode <= 0x7F) {
@@ -37,17 +37,19 @@ export var Database;
         }
         return parts;
     };
-    Database.write = (id, value) => {
+    Database.write = (id, value, player) => {
         const parts = Database.sliceByBytes(value, MAX_LENGTH);
+        const dataSource = (player ?? world);
         for (let i = 0; i <= parts.length; i++) {
-            world.setDynamicProperty(`${IDENTIFIER}:${id}-${i}`, parts[i]);
+            dataSource.setDynamicProperty(`${IDENTIFIER}:${id}-${i}`, parts[i]);
         }
     };
-    Database.read = (id) => {
+    Database.read = (id, player) => {
         let result = "";
         let index = 0;
+        const dataSource = (player ?? world);
         while (true) {
-            const part = world.getDynamicProperty(`${IDENTIFIER}:${id}-${index}`);
+            const part = dataSource.getDynamicProperty(`${IDENTIFIER}:${id}-${index}`);
             if (part === undefined || typeof part !== "string") {
                 if (index === 0)
                     return;
@@ -58,18 +60,18 @@ export var Database;
         }
         return result;
     };
-    Database.writeJSON = (id, json) => {
+    Database.writeJSON = (id, json, player) => {
         try {
             const value = JSON.stringify(json);
-            Database.write(id, value);
+            Database.write(id, value, player);
             return true;
         }
         catch (error) {
             return false;
         }
     };
-    Database.readJSON = (id) => {
-        const rawData = Database.read(id);
+    Database.readJSON = (id, player) => {
+        const rawData = Database.read(id, player);
         if (!rawData)
             return;
         try {
@@ -80,19 +82,20 @@ export var Database;
             return;
         }
     };
-    Database.remove = (id) => {
+    Database.remove = (id, player) => {
         let index = 0;
+        const dataSource = (player ?? world);
         while (true) {
             const propertyId = `${IDENTIFIER}:${id}-${index}`;
-            const part = world.getDynamicProperty(propertyId);
+            const part = dataSource.getDynamicProperty(propertyId);
             if (part === undefined || typeof part !== "string")
                 break;
-            world.setDynamicProperty(propertyId);
+            dataSource.setDynamicProperty(propertyId);
             index += 1;
         }
     };
-    Database.getIds = () => {
-        return world.getDynamicPropertyIds()
+    Database.getIds = (player) => {
+        return (player ?? world).getDynamicPropertyIds()
             .filter(id => id.startsWith(`${IDENTIFIER}:`));
     };
 })(Database || (Database = {}));

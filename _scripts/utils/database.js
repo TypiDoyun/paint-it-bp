@@ -2,7 +2,7 @@ import { world } from "@minecraft/server";
 export var Database;
 (function (Database) {
     const IDENTIFIER = "typi-database";
-    const MAX_LENGTH = 32_767;
+    const MAX_LENGTH = 32767;
     const getByte = (char) => {
         const charCode = char.charCodeAt(0);
         if (charCode <= 0x7F) {

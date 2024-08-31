@@ -1,5 +1,5 @@
 import { Command } from "../classes/command";
-import { sendWarning } from "../utils/player";
+import { sendWarning } from "../helpers/player";
 export const commandHandler = (eventData) => {
     const { message, sender } = eventData;
     if (!message.startsWith(Command.PREFIX))

@@ -7,8 +7,8 @@ import { Cylinder } from "../shapes/cylinder";
 import { Plane } from "../shapes/plane";
 import { Shape } from "../shapes/shape";
 import { Sphere } from "../shapes/sphere";
-import { Vector2 } from "../utils/math/vector2";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector2 } from "../utils/math/vector";
+import { Vector3 } from "../utils/math/vector";
 import { SendForm } from "../types/send-form";
 
 type SendShapeSettingForm = (player: Player, shape: Shape, backFunction?: SendForm) => Promise<Shape | undefined>;

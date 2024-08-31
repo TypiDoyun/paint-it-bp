@@ -2,9 +2,9 @@ import { BlockPermutation, BlockTypes, ItemComponentMineBlockEvent, ItemComponen
 import { playSound } from "../utils/player";
 import { Shape } from "../shapes/shape";
 import { getEraserOption, playerErasers } from "../forms/eraser-setting";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { Cuboid } from "../shapes/cuboid";
-import { Vector2 } from "../utils/math/vector2";
+import { Vector2 } from "../utils/math/vector";
 import { Sphere } from "../shapes/sphere";
 import { Circle } from "../shapes/circle";
 import { Cylinder } from "../shapes/cylinder";

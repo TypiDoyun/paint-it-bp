@@ -1,19 +1,8 @@
 import { Quaternion } from "./quaternion.js";
-import {
-    CreatedValue,
-    isFourDimensional,
-    isThreeDimensional,
-    iterateVector,
-    Vector2,
-    Vector3,
-    Vector4Array,
-    Vector4FactorElement,
-    Vector4Like,
-    VectorArray,
-    VectorGetterFactor,
-    VectorLike,
-    VectorSetterFactor,
-} from "./vector.js";
+import { Vector4Array, VectorLike, VectorArray, CreatedVector, Vector4FactorElement, Vector4Like, VectorFactor } from "./types/vector.js";
+import { isFourDimensional, isThreeDimensional, iterateVector } from "./vector.js";
+import { Vector2 } from "./vector2.js";
+import { Vector3 } from "./vector3.js";
 
 export class Vector4 {
     private readonly values: Vector4Array = [0, 0, 0, 0];
@@ -44,6 +33,13 @@ export class Vector4 {
                 return new Vector4(value.x, value.y, 0, 0);
             }
         }
+    }
+
+    public *[Symbol.iterator]() {
+        yield this.values[0];
+        yield this.values[1];
+        yield this.values[2];
+        yield this.values[3];
     }
 
     public static get zero() {
@@ -151,9 +147,9 @@ export class Vector4 {
         );
     }
 
-    public get<V extends Vector4, F extends VectorGetterFactor<V>>(
+    public get<V extends Vector4, F extends VectorFactor<V>>(
         factor: F
-    ): CreatedValue<V, F> {
+    ): CreatedVector<V, F> {
         const results: number[] = [];
         for (let i = 0; i < 4; i++) {
             const element = factor[i] as Vector4FactorElement;
@@ -162,50 +158,23 @@ export class Vector4 {
             else results.push(this[element]);
         }
 
-        if (results.length === 1) return results[0] as CreatedValue<V, F>;
+        if (results.length === 1) return results[0] as CreatedVector<V, F>;
         else if (results.length === 2)
-            return new Vector2(results[0], results[1]) as CreatedValue<V, F>;
+            return new Vector2(results[0], results[1]) as CreatedVector<V, F>;
         else if (results.length === 3)
             return new Vector3(
                 results[0],
                 results[1],
                 results[2]
-            ) as CreatedValue<V, F>;
+            ) as CreatedVector<V, F>;
         else if (results.length === 4)
             return new Vector4(
                 results[0],
                 results[1],
                 results[2],
                 results[3]
-            ) as CreatedValue<V, F>;
+            ) as CreatedVector<V, F>;
         throw new Error("Invalid element count");
-    }
-
-    public set(
-        elements: VectorSetterFactor<Vector4>,
-        value: VectorLike | VectorArray | number
-    ) {
-        if (typeof value === "number") {
-            for (let i = 0; i < 4; i++) {
-                const element = elements[i] as Vector4FactorElement;
-                if (element === "_") continue;
-                this[element] = value;
-            }
-        } else if (Array.isArray(value)) {
-            for (let i = 0; i < 4; i++) {
-                const element = elements[i] as Vector4FactorElement;
-                if (element === "_") continue;
-                this[element] = value[i] ?? 0;
-            }
-        } else {
-            if (value === this) value = this.clone;
-            iterateVector(value, (v, i) => {
-                const element = elements[i] as Vector4FactorElement;
-                if (element === undefined) return;
-                if (element === "_") return;
-                this[element] = v;
-            });
-        }
     }
 
     public add(value: VectorLike | VectorArray | number) {
@@ -341,27 +310,48 @@ export class Vector4 {
         return this;
     }
 
-    public min(v: Vector4Like) {
-        this.x = Math.min(this.x, v.x);
-        this.y = Math.min(this.y, v.y);
-        this.z = Math.min(this.z, v.z);
-        this.w = Math.min(this.w, v.w);
+    public min(value: VectorLike | VectorArray | number) {
+        if (typeof value === "number") {
+            this.x = Math.min(this.x, value);
+            this.y = Math.min(this.y, value);
+            this.z = Math.min(this.z, value);
+            this.w = Math.min(this.w, value);
+        } else if (Array.isArray(value)) {
+            this.x = Math.min(this.x, value[0]);
+            this.y = Math.min(this.y, value[1]);
+            this.z = Math.min(this.z, value[2] ?? 0);
+            this.w = Math.min(this.w, value[3] ?? 0);
+        } else {
+            this.x = Math.min(this.x, value.x);
+            this.y = Math.min(this.y, value.y);
+            if (isThreeDimensional(value)) this.z = Math.min(this.z, value.z);
+            if (isFourDimensional(value)) this.w = Math.min(this.w, value.w);
+        }
         return this;
     }
 
-    public max(v: Vector4Like) {
-        this.x = Math.max(this.x, v.x);
-        this.y = Math.max(this.y, v.y);
-        this.z = Math.max(this.z, v.z);
-        this.w = Math.max(this.w, v.w);
+    public max(value: VectorLike | VectorArray | number) {
+        if (typeof value === "number") {
+            this.x = Math.max(this.x, value);
+            this.y = Math.max(this.y, value);
+            this.z = Math.max(this.z, value);
+            this.w = Math.max(this.w, value);
+        } else if (Array.isArray(value)) {
+            this.x = Math.max(this.x, value[0]);
+            this.y = Math.max(this.y, value[1]);
+            this.z = Math.max(this.z, value[2] ?? 0);
+            this.w = Math.max(this.w, value[3] ?? 0);
+        } else {
+            this.x = Math.max(this.x, value.x);
+            this.y = Math.max(this.y, value.y);
+            if (isThreeDimensional(value)) this.z = Math.max(this.z, value.z);
+            if (isFourDimensional(value)) this.w = Math.max(this.w, value.w);
+        }
         return this;
     }
 
-    public clamp(min: Vector4Like, max: Vector4Like) {
-        this.x = Math.max(min.x, Math.min(max.x, this.x));
-        this.y = Math.max(min.y, Math.min(max.y, this.y));
-        this.z = Math.max(min.z, Math.min(max.z, this.z));
-        this.w = Math.max(min.w, Math.min(max.w, this.w));
+    public clamp(min: VectorLike | VectorArray | number, max: VectorLike | VectorArray | number) {
+        this.min(max).max(min);
         return this;
     }
 
@@ -411,5 +401,9 @@ export class Vector4 {
 
     public toString() {
         return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`;
+    }
+
+    public toObject() {
+        return { x: this.x, y: this.y, z: this.z, w: this.w };
     }
 }

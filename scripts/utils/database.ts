@@ -1,4 +1,4 @@
-import { world } from "@minecraft/server"
+import { Player, world } from "@minecraft/server"
 
 export namespace Database {
     const IDENTIFIER = "typi-database";
@@ -42,21 +42,22 @@ export namespace Database {
         return parts;
     }
 
-    export const write = (id: string, value: string) => {
-
+    export const write = (id: string, value: string, player?: Player) => {
         const parts = sliceByBytes(value, MAX_LENGTH);
+        const dataSource = (player ?? world);
 
         for (let i = 0; i <= parts.length; i++) {
-            world.setDynamicProperty(`${IDENTIFIER}:${id}-${i}`, parts[i]);
+            dataSource.setDynamicProperty(`${IDENTIFIER}:${id}-${i}`, parts[i]);
         }
     }
     
-    export const read = (id: string) => {
+    export const read = (id: string, player?: Player) => {
         let result = "";
         let index = 0;
+        const dataSource = (player ?? world);
 
         while (true) {
-            const part = world.getDynamicProperty(`${IDENTIFIER}:${id}-${index}`);
+            const part = dataSource.getDynamicProperty(`${IDENTIFIER}:${id}-${index}`);
 
             if (part === undefined || typeof part !== "string") {
                 if (index === 0) return;
@@ -70,11 +71,11 @@ export namespace Database {
         return result;
     }
 
-    export const writeJSON = (id: string, json: any): boolean => {
+    export const writeJSON = (id: string, json: any, player?: Player): boolean => {
         try {
             const value = JSON.stringify(json);
 
-            write(id, value);
+            write(id, value, player);
 
             return true;
         } catch (error) {
@@ -82,8 +83,8 @@ export namespace Database {
         }
     }
 
-    export const readJSON = <T>(id: string): T | undefined => {
-        const rawData = read(id);
+    export const readJSON = <T>(id: string, player?: Player): T | undefined => {
+        const rawData = read(id, player);
         
         if (!rawData) return;
 
@@ -96,22 +97,23 @@ export namespace Database {
         }
     }
 
-    export const remove = (id: string) => {
+    export const remove = (id: string, player?: Player) => {
         let index = 0;
+        const dataSource = (player ?? world);
 
         while (true) {
             const propertyId = `${IDENTIFIER}:${id}-${index}`;
-            const part = world.getDynamicProperty(propertyId);
+            const part = dataSource.getDynamicProperty(propertyId);
 
             if (part === undefined || typeof part !== "string") break;
             
-            world.setDynamicProperty(propertyId);
+            dataSource.setDynamicProperty(propertyId);
             index += 1;
         }
     }
 
-    export const getIds = (): string[] => {
-        return world.getDynamicPropertyIds()
+    export const getIds = (player?: Player): string[] => {
+        return (player ?? world).getDynamicPropertyIds()
             .filter(id => id.startsWith(`${IDENTIFIER}:`));
     }
 }

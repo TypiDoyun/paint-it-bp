@@ -1,16 +1,6 @@
-import {
-    Vector2Array,
-    VectorArray,
-    VectorLike,
-    Vector3,
-    Vector4,
-    VectorSetterFactor,
-    VectorGetterFactor,
-    CreatedValue,
-    Vector2FactorElement,
-    iterateVector,
-    Vector2Like,
-} from "./vector.js";
+import { CreatedVector, Vector2Array, Vector2FactorElement, Vector2Like, VectorArray, VectorFactor, VectorLike } from "./types/vector";
+import { Vector3 } from "./vector3";
+import { Vector4 } from "./vector4";
 
 export class Vector2 {
     private readonly values: Vector2Array = [0, 0];
@@ -28,6 +18,11 @@ export class Vector2 {
         } else {
             return new Vector2(value.x, value.y);
         }
+    }
+
+    public *[Symbol.iterator]() {
+        yield this.values[0];
+        yield this.values[1];
     }
 
     public static get zero() {
@@ -115,9 +110,9 @@ export class Vector2 {
      * console.log(a.get("yx")); // Vector2(20, 10)
      */
 
-    public get<V extends Vector2, F extends VectorGetterFactor<V>>(
+    public get<V extends Vector2, F extends VectorFactor<V>>(
         factor: F
-    ): CreatedValue<V, F> {
+    ): CreatedVector<V, F> {
         const results: number[] = [];
         for (let i = 0; i < 4; i++) {
             const element = factor[i] as Vector2FactorElement;
@@ -125,49 +120,23 @@ export class Vector2 {
             if (element === "_") results.push(0);
             else results.push(this[element]);
         }
-        if (results.length === 1) return results[0] as CreatedValue<V, F>;
+        if (results.length === 1) return results[0] as CreatedVector<V, F>;
         else if (results.length === 2)
-            return new Vector2(results[0], results[1]) as CreatedValue<V, F>;
+            return new Vector2(results[0], results[1]) as CreatedVector<V, F>;
         else if (results.length === 3)
             return new Vector3(
                 results[0],
                 results[1],
                 results[2]
-            ) as CreatedValue<V, F>;
+            ) as CreatedVector<V, F>;
         else if (results.length === 4)
             return new Vector4(
                 results[0],
                 results[1],
                 results[2],
                 results[3]
-            ) as CreatedValue<V, F>;
+            ) as CreatedVector<V, F>;
         throw new Error("Invalid element count");
-    }
-
-    public set(
-        elements: VectorSetterFactor<Vector2>,
-        value: VectorLike | VectorArray | number
-    ) {
-        if (typeof value === "number") {
-            for (let i = 0; i < 2; i++) {
-                const element = elements[i] as Vector2FactorElement;
-                if (element === "_") continue;
-                this[element] = value;
-            }
-        } else if (Array.isArray(value)) {
-            for (let i = 0; i < 2; i++) {
-                const element = elements[i] as Vector2FactorElement;
-                if (element === "_") continue;
-                this[element] = value[i] ?? 0;
-            }
-        } else {
-            if (value === this) value = this.clone;
-            iterateVector(value, (v, i) => {
-                const element = elements[i] as Vector2FactorElement;
-                if (element === "_") return;
-                this[element] = v;
-            });
-        }
     }
 
     public add(value: VectorLike | VectorArray | number) {
@@ -277,21 +246,36 @@ export class Vector2 {
         return this;
     }
 
-    public min(v: VectorLike) {
-        this.x = Math.min(this.x, v.x);
-        this.y = Math.min(this.y, v.y);
+    public min(v: VectorLike | VectorArray | number) {
+        if (typeof v === "number") {
+            this.x = Math.min(this.x, v);
+            this.y = Math.min(this.y, v);
+        } else if (Array.isArray(v)) {
+            this.x = Math.min(this.x, v[0]);
+            this.y = Math.min(this.y, v[1]);
+        } else {
+            this.x = Math.min(this.x, v.x);
+            this.y = Math.min(this.y, v.y);
+        }
         return this;
     }
 
-    public max(v: VectorLike) {
-        this.x = Math.max(this.x, v.x);
-        this.y = Math.max(this.y, v.y);
+    public max(v: VectorLike | VectorArray | number) {
+        if (typeof v === "number") {
+            this.x = Math.max(this.x, v);
+            this.y = Math.max(this.y, v);
+        } else if (Array.isArray(v)) {
+            this.x = Math.max(this.x, v[0]);
+            this.y = Math.max(this.y, v[1]);
+        } else {
+            this.x = Math.max(this.x, v.x);
+            this.y = Math.max(this.y, v.y);
+        }
         return this;
     }
 
-    public clamp(min: VectorLike, max: VectorLike) {
-        this.x = Math.max(min.x, Math.min(max.x, this.x));
-        this.y = Math.max(min.y, Math.min(max.y, this.y));
+    public clamp(min: VectorLike | VectorArray | number, max: VectorLike | VectorArray | number) {
+        this.max(min).min(max);
         return this;
     }
 
@@ -331,5 +315,9 @@ export class Vector2 {
 
     public toString() {
         return `(${this.x}, ${this.y})`;
+    }
+
+    public toObject() {
+        return { x: this.x, y: this.y };
     }
 }

@@ -1,6 +1,6 @@
 import { Axis } from "../types/axis";
-import { Vector3 } from "../utils/math/vector3";
-import { Shape } from "./shape";
+import { Vector3 } from "../utils/math/vector";
+import { Shape } from "../classes/shape";
 export class Cylinder extends Shape {
     _radius;
     _axis;
@@ -56,5 +56,19 @@ export class Cylinder extends Shape {
                     location.z <= this._height &&
                     location.z >= -this._height);
         }
+    }
+    toObject() {
+        return JSON.stringify({
+            type: "cylinder",
+            radius: this._radius,
+            height: this._height,
+            axis: this._axis,
+        });
+    }
+    fromObject(shapeJSON) {
+        this._radius = shapeJSON.radius;
+        this._height = shapeJSON.height;
+        this._axis = shapeJSON.axis;
+        return this;
     }
 }

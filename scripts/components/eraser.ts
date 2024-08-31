@@ -1,59 +1,105 @@
-import { BlockTypes, ItemComponentMineBlockEvent, ItemComponentUseEvent, ItemCustomComponent, Player, system } from "@minecraft/server";
-import { playSound } from "../utils/player";
+import { Block, ItemComponentMineBlockEvent, ItemComponentUseEvent, ItemCustomComponent, Player, system } from "@minecraft/server";
 import { Vector3 } from "../utils/math/vector3";
+import { getEraserArmLength, getEraserShape } from "../database/eraser";
+import { playSound, spawnBlockSideParticle } from "../helpers/player";
 import { Queue } from "../utils/queue";
 
 export class EraserComponent implements ItemCustomComponent {
     constructor() {
         this.onUse = this.onUse.bind(this);
-        // this.onMineBlock = this.onMineBlock.bind(this);
     }
 
     public onUse(eventData: ItemComponentUseEvent) {
         const { source, itemStack } = eventData;
 
-        playSound(source, "random.pop");
+        playSound(source, "random.pop", 1);
 
+        const shape = getEraserShape(source);
+        const dimension = source.dimension;
+        const viewDirection = Vector3.from(source.getViewDirection());
+        viewDirection.length = getEraserArmLength(source);
+        const placeLocation = viewDirection.clone.add(source.getHeadLocation());
+        shape.rotationDegrees = source.getRotation();
+
+        system.runJob(function* () {
+            for (const block of shape.getBlocks(placeLocation, dimension)) {
+                yield;
+                if (block.typeId === "typidoyun:sketch") continue;
+
+                block.setType("minecraft:air");
+                yield;
+            }
+        }());
     }
 
     public onMineBlock(eventData: ItemComponentMineBlockEvent) {
-        const { source, minedBlockPermutation, block } = eventData;
+        const { source, block, minedBlockPermutation } = eventData;
 
         if (!(source instanceof Player)) return;
 
+        const dimension = block.dimension;
+        const visited = new Set<string>();
+        const queue = new Queue<Block>();
+        const age = 0.5;
+
         if (minedBlockPermutation.type.id !== "typidoyun:sketch") return;
 
-        const visited = new Set<string>();
-        const queue = new Queue<Vector3>();
-        const start = Vector3.from(block.location);
+        const neighbors = [
+            new Vector3(1, 0, 0),
+            new Vector3(-1, 0, 0),
+            new Vector3(0, 1, 0),
+            new Vector3(0, -1, 0),
+            new Vector3(0, 0, 1),
+            new Vector3(0, 0, -1),
+        ];
 
-        queue.push(start);
+        queue.push(block);
+        visited.add(Vector3.from(block.location).toString());
 
-        system.runJob(function*() {
+        system.runJob(function* () {
             while (queue.size > 0) {
-                const current = queue.pop()!;
-                const locationStr = current.toString();
-                if (visited.has(locationStr)) continue;
-                visited.add(locationStr);
-    
-                const currentBlock = source.dimension.getBlock(current);
-    
-                if (!currentBlock) continue;
-                if (currentBlock.typeId !== "typidoyun:sketch" && current !== start) continue;
+                const currentBlock = queue.pop()!;
+                const currentLocation = currentBlock.location;
 
-                const air = BlockTypes.get("minecraft:air")!;
-                currentBlock.setType(air);
+                currentBlock.setType("minecraft:air");
                 yield;
-    
-                queue.push(
-                    current.clone.add([1, 0, 0]),
-                    current.clone.add([0, 1, 0]),
-                    current.clone.add([0, 0, 1]),
-                    current.clone.add([-1, 0, 0]),
-                    current.clone.add([0, -1, 0]),
-                    current.clone.add([0, 0, -1]), 
-                )
+
+                for (let i = 0; i < neighbors.length; i++) {
+                    const neighbor = neighbors[i];
+                    const neighborLocation = neighbor.clone.add(currentBlock.location);
+                    const neighborBlock = dimension.getBlock(neighborLocation);
+
+                    const locationStr = neighborLocation.toString();
+                    const notVisited = !visited.has(locationStr);
+                    if (neighborBlock?.typeId === "typidoyun:sketch" && notVisited) {
+                        visited.add(locationStr);
+                        queue.push(neighborBlock);
+                    } else if (notVisited) {
+                        switch (i) {
+                            case 0:
+                                spawnBlockSideParticle(source, currentLocation, "x", age);
+                                break;
+                            case 1:
+                                spawnBlockSideParticle(source, currentLocation, "-x", age);
+                                break;
+                            case 2:
+                                spawnBlockSideParticle(source, currentLocation, "y", age);
+                                break;
+                            case 3:
+                                spawnBlockSideParticle(source, currentLocation, "-y", age);
+                                break;
+                            case 4:
+                                spawnBlockSideParticle(source, currentLocation, "z", age);
+                                break;
+                            case 5:
+                                spawnBlockSideParticle(source, currentLocation, "-z", age);
+                                break;
+                        }
+                    }
+            
+                }
             }
         }());
+
     }
 }

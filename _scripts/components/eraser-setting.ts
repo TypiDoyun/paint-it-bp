@@ -1,6 +1,6 @@
 import { ItemComponentUseEvent, ItemCustomComponent } from "@minecraft/server";
 import { playSound } from "../utils/player";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { sendEraserSettingForm } from "../forms/eraser-setting";
 
 export class EraserSettingComponent implements ItemCustomComponent {

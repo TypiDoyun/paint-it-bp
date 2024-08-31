@@ -1,5 +1,5 @@
 import { Command } from "../classes/command";
-import { sendMessage } from "../utils/player";
+import { sendMessage } from "../helpers/player";
 
 export default new Command()
     .setName("ping")

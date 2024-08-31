@@ -1,4 +1,3 @@
-#bridge-file-version: #15
 execute as @s at @s anchored eyes positioned ^-4 ^-4 ^8 run fill ~ ~ ~ ~ ~ ~ cobblestone replace typidoyun:sketch
 execute as @s at @s anchored eyes positioned ^-4 ^-4 ^9 run fill ~ ~ ~ ~ ~ ~ cobblestone replace typidoyun:sketch
 execute as @s at @s anchored eyes positioned ^-4 ^-4 ^10 run fill ~ ~ ~ ~ ~ ~ cobblestone replace typidoyun:sketch

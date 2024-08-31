@@ -1,7 +1,7 @@
 import { Region } from "../types/root";
 import { Axis } from "../utils/axis";
 import { Vector3Like } from "../utils/math/vector";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { Shape } from "./shape";
 
 export class Cylinder extends Shape {

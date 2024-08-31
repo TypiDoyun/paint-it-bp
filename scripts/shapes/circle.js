@@ -1,6 +1,6 @@
 import { Axis } from "../types/axis";
-import { Vector3 } from "../utils/math/vector3";
-import { Shape } from "./shape";
+import { Vector3 } from "../utils/math/vector";
+import { Shape } from "../classes/shape";
 export class Circle extends Shape {
     _radius;
     _axis;
@@ -33,6 +33,18 @@ export class Circle extends Shape {
     inShape(location) {
         const fromOrigin = Vector3.from(location);
         const radius = this._radius;
-        return fromOrigin.lengthSquared <= radius * radius;
+        return fromOrigin.lengthSquared <= radius * radius && fromOrigin[this._axis === 0 ? "x" : this._axis === 1 ? "y" : "z"] === 0;
+    }
+    toObject() {
+        return JSON.stringify({
+            type: "circle",
+            radius: this._radius,
+            axis: this._axis,
+        });
+    }
+    fromObject(shapeJSON) {
+        this._radius = shapeJSON.radius;
+        this._axis = shapeJSON.axis;
+        return this;
     }
 }

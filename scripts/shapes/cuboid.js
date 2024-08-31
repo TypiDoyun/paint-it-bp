@@ -1,5 +1,5 @@
-import { Vector3 } from "../utils/math/vector";
-import { Shape } from "./shape";
+import { Shape } from "../classes/shape";
+import { Vector3 } from "../utils/math/vector3";
 export class Cuboid extends Shape {
     _volumes;
     constructor() {
@@ -25,5 +25,19 @@ export class Cuboid extends Shape {
         return location.x >= from.x && location.x <= to.x &&
             location.y >= from.y && location.y <= to.y &&
             location.z >= from.z && location.z <= to.z;
+    }
+    toObject() {
+        return JSON.stringify({
+            type: "cuboid",
+            volumes: {
+                x: this._volumes.x,
+                y: this._volumes.y,
+                z: this._volumes.z
+            }
+        });
+    }
+    fromObject(shapeJSON) {
+        this.volumes = shapeJSON.volumes;
+        return this;
     }
 }

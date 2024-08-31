@@ -1,15 +1,15 @@
 import { Vector3 } from "../utils/math/vector";
-import { Shape } from "./shape";
+import { Shape } from "../classes/shape";
 export class Cube extends Shape {
     _volume;
     constructor() {
         super();
         this._volume = 0;
     }
-    get volumes() {
+    get volume() {
         return this._volume;
     }
-    set volumes(value) {
+    set volume(value) {
         this._volume = Math.floor(Math.abs(value));
     }
     get region() {
@@ -22,5 +22,15 @@ export class Cube extends Shape {
         return location.x >= -this._volume && location.x <= this._volume &&
             location.y >= -this._volume && location.y <= this._volume &&
             location.z >= -this._volume && location.z <= this._volume;
+    }
+    toObject() {
+        return JSON.stringify({
+            type: "cube",
+            volume: this._volume
+        });
+    }
+    fromObject(shapeJSON) {
+        this._volume = shapeJSON.volume;
+        return this;
     }
 }

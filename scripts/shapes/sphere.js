@@ -1,5 +1,5 @@
 import { Vector3 } from "../utils/math/vector";
-import { Shape } from "./shape";
+import { Shape } from "../classes/shape";
 export class Sphere extends Shape {
     _radius;
     constructor() {
@@ -22,5 +22,15 @@ export class Sphere extends Shape {
         const fromOrigin = Vector3.from(location);
         const radius = this._radius;
         return fromOrigin.lengthSquared <= radius ** 2;
+    }
+    toObject() {
+        return JSON.stringify({
+            type: "sphere",
+            radius: this._radius,
+        });
+    }
+    fromObject(shapeJSON) {
+        this._radius = shapeJSON.radius;
+        return this;
     }
 }

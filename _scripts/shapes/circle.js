@@ -1,5 +1,5 @@
 import { Axis } from "../utils/axis";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { Shape } from "./shape";
 export class Circle extends Shape {
     _radius;

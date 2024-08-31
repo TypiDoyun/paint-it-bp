@@ -1,6 +1,8 @@
 import { Region } from "../types/region";
-import { Vector3, Vector3Like } from "../utils/math/vector";
-import { Shape } from "./shape";
+import { Shape } from "../classes/shape";
+import { CuboidShapeObject } from "../types/shapes";
+import { Vector3Like } from "../utils/math/types/vector";
+import { Vector3 } from "../utils/math/vector3";
 
 export class Cuboid extends Shape {
     private _volumes: Vector3;
@@ -33,5 +35,22 @@ export class Cuboid extends Shape {
         return location.x >= from.x && location.x <= to.x &&
                location.y >= from.y && location.y <= to.y &&
                location.z >= from.z && location.z <= to.z;
+    }
+
+    public toObject() {
+        return JSON.stringify({
+            type: "cuboid",
+            volumes: {
+                x: this._volumes.x,
+                y: this._volumes.y,
+                z: this._volumes.z
+            }
+        } satisfies CuboidShapeObject);
+    }
+
+    public fromObject(shapeJSON: CuboidShapeObject) {
+        this.volumes = shapeJSON.volumes;
+
+        return this;
     }
 }

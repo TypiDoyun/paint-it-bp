@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../classes/command";
-import { sendWarning } from "../utils/player";
+import { sendWarning } from "../helpers/player";
 
 export const commandHandler = (eventData: ChatSendBeforeEvent) => {
     const { message, sender } = eventData;

@@ -1,7 +1,7 @@
 import { Region } from "../types/root";
 import { Axis } from "../utils/axis";
 import { Vector2, Vector2Like, Vector3Like } from "../utils/math/vector";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { Shape } from "./shape";
 
 export class Plane extends Shape {

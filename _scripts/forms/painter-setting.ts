@@ -4,7 +4,7 @@ import { Paint } from "../paint";
 import { Cuboid } from "../shapes/cuboid";
 import { Sphere } from "../shapes/sphere";
 import { SendForm } from "../types/send-form";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { Shape } from "../shapes/shape";
 import { sendShapeSettingForm } from "./shape-setting";
 

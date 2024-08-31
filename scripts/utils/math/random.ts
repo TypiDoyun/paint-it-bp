@@ -11,6 +11,10 @@ export namespace Random {
         return Math.random() < 0.5;
     };
 
+    export const randSign = () => {
+        return Math.random() < 0.5 ? -1 : 1;
+    }
+
     export const shuffle = <T>(arr: T[]) => {
         for (let i = arr.length - 1; i > 0; i--) {
             const j = randInt(0, i);

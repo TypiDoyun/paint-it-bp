@@ -1,5 +1,5 @@
 import { ItemComponentUseEvent, ItemCustomComponent } from "@minecraft/server";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { playSound } from "../utils/player";
 
 export class TeleporterComponent implements ItemCustomComponent {

@@ -1,7 +1,7 @@
 import { ItemComponentUseEvent, ItemCustomComponent, system, world } from "@minecraft/server";
 import { getPlayerPaintShape, playerPaints, playerPaintShapes } from "../forms/painter-setting";
 import { playSound, sendWarning } from "../utils/player";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 
 export class PainterComponent implements ItemCustomComponent {
     constructor() {

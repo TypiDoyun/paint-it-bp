@@ -6,8 +6,8 @@ import { Cuboid } from "../shapes/cuboid";
 import { Cylinder } from "../shapes/cylinder";
 import { Plane } from "../shapes/plane";
 import { Sphere } from "../shapes/sphere";
-import { Vector2 } from "../utils/math/vector2";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector2 } from "../utils/math/vector";
+import { Vector3 } from "../utils/math/vector";
 export const sendShapeSettingForm = (player, shape, backFunction) => {
     return new Promise((resolve, reject) => {
         system.run(async () => {

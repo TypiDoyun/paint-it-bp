@@ -1,18 +1,7 @@
-import {
-    isThreeDimensional,
-    Vector2,
-    Vector3Array,
-    VectorArray,
-    VectorLike,
-    Vector4,
-    VectorGetterFactor,
-    CreatedValue,
-    VectorSetterFactor,
-    Vector3FactorElement,
-    iterateVector,
-    Vector3Like,
-} from "./vector.js";
-import { Quaternion } from "./quaternion.js";
+import { Vector3Array, VectorLike, VectorArray, CreatedVector, Vector3FactorElement, Vector3Like, VectorFactor } from "./types/vector.js";
+import { isThreeDimensional, iterateVector, Quaternion } from "./vector.js";
+import { Vector2 } from "./vector2.js";
+import { Vector4 } from "./vector4.js";
 
 export class Vector3 {
     private readonly values: Vector3Array = [0, 0, 0];
@@ -35,6 +24,12 @@ export class Vector3 {
                 return new Vector3(value.x, value.y, 0);
             }
         }
+    }
+
+    public *[Symbol.iterator]() {
+        yield this.values[0];
+        yield this.values[1];
+        yield this.values[2];
     }
 
     public static get zero() {
@@ -123,9 +118,9 @@ export class Vector3 {
         return new Vector3(this.x / length, this.y / length, this.z / length);
     }
 
-    public get<V extends Vector3, F extends VectorGetterFactor<V>>(
+    public get<V extends Vector3, F extends VectorFactor<V>>(
         factor: F
-    ): CreatedValue<V, F> {
+    ): CreatedVector<V, F> {
         const results: number[] = [];
         for (let i = 0; i < 4; i++) {
             const element = factor[i] as Vector3FactorElement;
@@ -134,50 +129,23 @@ export class Vector3 {
             else results.push(this[element]);
         }
 
-        if (results.length === 1) return results[0] as CreatedValue<V, F>;
+        if (results.length === 1) return results[0] as CreatedVector<V, F>;
         else if (results.length === 2)
-            return new Vector2(results[0], results[1]) as CreatedValue<V, F>;
+            return new Vector2(results[0], results[1]) as CreatedVector<V, F>;
         else if (results.length === 3)
             return new Vector3(
                 results[0],
                 results[1],
                 results[2]
-            ) as CreatedValue<V, F>;
+            ) as CreatedVector<V, F>;
         else if (results.length === 4)
             return new Vector4(
                 results[0],
                 results[1],
                 results[2],
                 results[3]
-            ) as CreatedValue<V, F>;
+            ) as CreatedVector<V, F>;
         throw new Error("Invalid element count");
-    }
-
-    public set(
-        elements: VectorSetterFactor<Vector3>,
-        value: VectorLike | VectorArray | number
-    ) {
-        if (typeof value === "number") {
-            for (let i = 0; i < 3; i++) {
-                const element = elements[i] as Vector3FactorElement;
-                if (element === "_") continue;
-                this[element] = value;
-            }
-        } else if (Array.isArray(value)) {
-            for (let i = 0; i < 3; i++) {
-                const element = elements[i] as Vector3FactorElement;
-                if (element === "_") continue;
-                this[element] = value[i] ?? 0;
-            }
-        } else {
-            if (value === this) value = this.clone;
-            iterateVector(value, (v, i) => {
-                const element = elements[i] as Vector3FactorElement;
-                if (element === undefined) return;
-                if (element === "_") return;
-                this[element] = v;
-            });
-        }
     }
 
     public add(value: VectorLike | VectorArray | number) {
@@ -310,10 +278,10 @@ export class Vector3 {
     public rotateY(radian: number) {
         const cos = Math.cos(radian);
         const sin = Math.sin(radian);
-        const z = this.z * cos - this.x * sin;
-        const x = this.z * sin + this.x * cos;
-        this.z = z;
+        const x = this.x * cos - this.z * sin;
+        const z = this.x * sin + this.z * cos;
         this.x = x;
+        this.z = z;
         return this;
     }
 
@@ -366,24 +334,42 @@ export class Vector3 {
         return this;
     }
 
-    public min(v: Vector3Like) {
-        this.x = Math.min(this.x, v.x);
-        this.y = Math.min(this.y, v.y);
-        this.z = Math.min(this.z, v.z);
+    public min(v: VectorLike | VectorArray | number) {
+        if (typeof v === "number") {
+            this.x = Math.min(this.x, v);
+            this.y = Math.min(this.y, v);
+            this.z = Math.min(this.z, v);
+        } else if (Array.isArray(v)) {
+            this.x = Math.min(this.x, v[0]);
+            this.y = Math.min(this.y, v[1]);
+            this.z = Math.min(this.z, v[2] ?? Infinity);
+        } else {
+            this.x = Math.min(this.x, v.x);
+            this.y = Math.min(this.y, v.y);
+            if (isThreeDimensional(v)) this.z = Math.min(this.z, v.z);
+        }
         return this;
     }
 
-    public max(v: Vector3Like) {
-        this.x = Math.max(this.x, v.x);
-        this.y = Math.max(this.y, v.y);
-        this.z = Math.max(this.z, v.z);
+    public max(v: VectorLike | VectorArray | number) {
+        if (typeof v === "number") {
+            this.x = Math.max(this.x, v);
+            this.y = Math.max(this.y, v);
+            this.z = Math.max(this.z, v);
+        } else if (Array.isArray(v)) {
+            this.x = Math.max(this.x, v[0]);
+            this.y = Math.max(this.y, v[1]);
+            this.z = Math.max(this.z, v[2] ?? -Infinity);
+        } else {
+            this.x = Math.max(this.x, v.x);
+            this.y = Math.max(this.y, v.y);
+            if (isThreeDimensional(v)) this.z = Math.max(this.z, v.z);
+        }
         return this;
     }
 
-    public clamp(min: Vector3Like, max: Vector3Like) {
-        this.x = Math.max(min.x, Math.min(max.x, this.x));
-        this.y = Math.max(min.y, Math.min(max.y, this.y));
-        this.z = Math.max(min.z, Math.min(max.z, this.z));
+    public clamp(min: VectorLike | VectorArray | number, max: VectorLike | VectorArray | number) {
+        this.min(max).max(min);
         return this;
     }
 
@@ -426,7 +412,10 @@ export class Vector3 {
         const dot = this.normalized.dot(vector.normalized);
         const theta = Math.acos(dot) * t;
         const surface = this.clone.cross(v).normalized;
-        this.set("xyz", this.rotationFromQuaternion(surface, theta));
+        const rotated = this.rotationFromQuaternion(surface, theta);
+        this.x = rotated.x;
+        this.y = rotated.y;
+        this.z = rotated.z;
         return this;
     }
 
@@ -436,5 +425,9 @@ export class Vector3 {
 
     public toString() {
         return `(${this.x}, ${this.y}, ${this.z})`;
+    }
+
+    public toObject() {
+        return { x: this.x, y: this.y, z: this.z };
     }
 }

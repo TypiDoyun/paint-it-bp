@@ -3,7 +3,7 @@ import { SendForm } from "../types/send-form";
 import { ActionFormData, FormCancelationReason, ModalFormData } from "@minecraft/server-ui";
 import { Shape } from "../shapes/shape";
 import { Cuboid } from "../shapes/cuboid";
-import { Vector3 } from "../utils/math/vector3";
+import { Vector3 } from "../utils/math/vector";
 import { Sphere } from "../shapes/sphere";
 import { Circle } from "../shapes/circle";
 import { SketcherOption } from "../types/sketcher-option";

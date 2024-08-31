@@ -1,6 +1,6 @@
 import { BlockTypes, LocationOutOfWorldBoundariesError, UnloadedChunksError } from "@minecraft/server";
 import { sendMessage } from "./utils/player";
-import { Vector3 } from "./utils/math/vector3";
+import { Vector3 } from "./utils/math/vector";
 import { Random } from "./utils/math/random";
 // export function makePaint(brush_size: number, paint: Paint): string {
 //     let commands: string[] = [];
